@@ -31,6 +31,38 @@ class MaxHeap:
         self.head = self.head.next
         return max_val
 
+    def sort(self):
+        """
+        Sort the Max-Heap in ascending order.
+        - Use a selection sort-like approach directly on the linked list.
+        """
+        sorted_head = None  # Head of the sorted list
+
+        while self.head:
+            # Find the maximum node in the current heap
+            max_node = self.head
+            max_prev = None
+            current = self.head
+            prev = None
+
+            while current and current.next:
+                if current.next.val > max_node.val:
+                    max_node = current.next
+                    max_prev = current
+                current = current.next
+
+            # Remove the max_node from the original list
+            if max_prev:
+                max_prev.next = max_node.next
+            else:
+                self.head = max_node.next
+
+            # Insert max_node at the beginning of the sorted list
+            max_node.next = sorted_head
+            sorted_head = max_node
+
+        self.head = sorted_head
+
     def print_heap(self):
         """Print the Max-Heap."""
         current = self.head
@@ -40,7 +72,7 @@ class MaxHeap:
         print()
 
 
-# Test Max-Heap
+# Test Max-Heap with sort functionality
 print("\nMax-Heap with Linked List Implementation:")
 max_heap = MaxHeap()
 
@@ -52,6 +84,7 @@ max_heap.insert(15)
 print("Max-Heap after insertions: ", end="")
 max_heap.print_heap()
 
-print(f"Popping maximum: {max_heap.pop()}")
-print("Max-Heap after popping: ", end="")
+# Sort the Max-Heap
+print("\nSorting the Max-Heap:")
+max_heap.sort()
 max_heap.print_heap()

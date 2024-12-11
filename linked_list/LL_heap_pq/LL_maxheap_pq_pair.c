@@ -3,6 +3,17 @@
 
 #define HEAP_SIZE 100
 
+/*
+ * Pair 구조체: 두 정수 x와 y를 저장하는 구조체.
+ * PriorityQueue 구조체: Pair로 이루어진 최대 힙을 구현하는 구조체.
+ * Node 구조체: 우선순위 큐를 포함한 단일 연결 리스트의 노드.
+ * 
+ * 주요 기능:
+ * - PriorityQueue: Pair를 기반으로 최대 힙을 구현. 삽입, 삭제, 출력 지원.
+ * - Linked List: PriorityQueue를 포함하는 노드로 구성된 단일 연결 리스트.
+ * - 각 노드의 우선순위 큐에 데이터를 삽입, 삭제, 출력하는 기능 제공.
+ */
+
 // Pair struct
 typedef struct {
     int x, y;
@@ -21,17 +32,41 @@ typedef struct Node {
 } Node;
 
 // Function prototypes
+
+// 우선순위 큐 초기화: 빈 큐를 생성합니다.
 PriorityQueue createPriorityQueue();
+
+// 우선순위 큐에 새로운 Pair를 삽입합니다.
 void priorityQueueInsert(PriorityQueue* pq, Pair value);
+
+// 우선순위 큐에서 가장 큰 Pair를 제거하고 반환합니다.
 Pair priorityQueuePop(PriorityQueue* pq);
+
+// 우선순위 큐의 모든 요소를 출력합니다.
 void printPriorityQueue(PriorityQueue* pq);
 
+// PriorityQueue 정렬 (힙 정렬 기반)
+void priorityQueueSort(PriorityQueue* pq);
+
+// 힙 정렬의 max-heapify 동작
+void maxHeapify(PriorityQueue* pq, int size, int index);
+
+// 새로운 연결 리스트 노드를 생성합니다.
 Node* createNode();
+
+// 연결 리스트의 맨 앞에 새로운 노드를 추가합니다.
 void addNode(Node** head);
+
+// 연결 리스트의 모든 노드의 힙을 출력합니다.
 void printHeaps(Node* head);
 
+// 힙 삽입 시 최대 힙 속성을 유지하도록 버블 업 연산을 수행합니다.
 void bubbleUp(PriorityQueue* pq, int index);
+
+// 힙 삭제 시 최대 힙 속성을 유지하도록 버블 다운 연산을 수행합니다.
 void bubbleDown(PriorityQueue* pq, int index);
+
+// 두 Pair를 비교하여 우선순위를 결정합니다 (x를 우선 비교, 같으면 y 비교).
 int comparePairs(Pair a, Pair b);
 
 // Create an empty priority queue
@@ -107,65 +142,73 @@ void bubbleDown(PriorityQueue* pq, int index) {
     }
 }
 
-// Create a new linked list node
-Node* createNode() {
-    Node* newNode = (Node*)malloc(sizeof(Node));
-    newNode->heap = createPriorityQueue();
-    newNode->next = NULL;
-    return newNode;
-}
+// Max-heapify function for sorting
+void maxHeapify(PriorityQueue* pq, int size, int index) {
+    int largest = index;
+    int left = 2 * index + 1;
+    int right = 2 * index + 2;
 
-// Add a new node to the linked list
-void addNode(Node** head) {
-    Node* newNode = createNode();
-    newNode->next = *head;
-    *head = newNode;
-}
+    // Check left child
+    if (left < size && comparePairs(pq->elements[left], pq->elements[largest]) > 0) {
+        largest = left;
+    }
 
-// Print all heaps in the linked list
-void printHeaps(Node* head) {
-    Node* current = head;
-    int index = 0;
-    while (current != NULL) {
-        printf("Heap in Node %d: ", index++);
-        printPriorityQueue(&current->heap);
-        current = current->next;
+    // Check right child
+    if (right < size && comparePairs(pq->elements[right], pq->elements[largest]) > 0) {
+        largest = right;
+    }
+
+    // If largest is not the current index
+    if (largest != index) {
+        Pair temp = pq->elements[index];
+        pq->elements[index] = pq->elements[largest];
+        pq->elements[largest] = temp;
+
+        // Recursively heapify the affected subtree
+        maxHeapify(pq, size, largest);
     }
 }
 
-// Main function to test the implementation
+// Heap sort for PriorityQueue
+void priorityQueueSort(PriorityQueue* pq) {
+    int originalSize = pq->size;
+
+    // Build the max heap
+    for (int i = pq->size / 2 - 1; i >= 0; i--) {
+        maxHeapify(pq, pq->size, i);
+    }
+
+    // Extract elements from heap one by one
+    for (int i = pq->size - 1; i > 0; i--) {
+        // Move current root to the end
+        Pair temp = pq->elements[0];
+        pq->elements[0] = pq->elements[i];
+        pq->elements[i] = temp;
+
+        // Reduce the heap size and call maxHeapify
+        maxHeapify(pq, i, 0);
+    }
+
+    // Restore original size
+    pq->size = originalSize;
+}
+
+// Main function to test heap sort
 int main() {
-    printf("\nMax-Heap with Pairs in Linked List:\n");
+    PriorityQueue pq = createPriorityQueue();
 
-    Node* head = NULL;
-    addNode(&head);
-    addNode(&head);
+    priorityQueueInsert(&pq, (Pair){10, 20});
+    priorityQueueInsert(&pq, (Pair){15, 25});
+    priorityQueueInsert(&pq, (Pair){5, 10});
+    priorityQueueInsert(&pq, (Pair){20, 30});
 
-    // Add elements to the first node's heap
-    priorityQueueInsert(&head->heap, (Pair){10, 20});
-    priorityQueueInsert(&head->heap, (Pair){15, 25});
-    priorityQueueInsert(&head->heap, (Pair){5, 10});
+    printf("Priority Queue before sorting:\n");
+    printPriorityQueue(&pq);
 
-    // Add elements to the second node's heap
-    priorityQueueInsert(&head->next->heap, (Pair){20, 30});
-    priorityQueueInsert(&head->next->heap, (Pair){25, 15});
-    priorityQueueInsert(&head->next->heap, (Pair){30, 5});
+    priorityQueueSort(&pq);
 
-    printf("Heaps in the linked list after insertion:\n");
-    printHeaps(head);
-
-    // Pop elements from the heaps
-    printf("\nPopping elements from the first heap:\n");
-    Pair p = priorityQueuePop(&head->heap);
-    printf("Popped: (%d, %d)\n", p.x, p.y);
-    printf("Heap after popping: ");
-    printPriorityQueue(&head->heap);
-
-    printf("\nPopping elements from the second heap:\n");
-    Pair q = priorityQueuePop(&head->next->heap);
-    printf("Popped: (%d, %d)\n", q.x, q.y);
-    printf("Heap after popping: ");
-    printPriorityQueue(&head->next->heap);
+    printf("Priority Queue after sorting:\n");
+    printPriorityQueue(&pq);
 
     return 0;
 }

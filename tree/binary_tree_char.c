@@ -19,6 +19,8 @@
 // (13) is_subtree: Given a TreeNode, check if the treenode is a subtree of the current tree (bool)
 // (14) count_nodes_per_level: Return a dictionary showing the count of nodes at each level (dict)
 // (15) create_bt_from_array: Given a list of ints (or a string), make a complete binary tree (left to right)
+// (16) to_complete_bt: Given a binary tree, convert it into a complete binary tree (in-place)
+// (17) to_complete_bst: Given a binary tree, convert it into a complete BST (in-place) 
 
 // Definition for a binary tree node
 typedef struct TreeNode {
@@ -279,6 +281,84 @@ TreeNode* create_bt_from_array(const char* values, int size) {
     TreeNode* root = nodes[0];
     free(nodes);
     return root;
+}
+
+// helper for (16)
+void collect_nodes(TreeNode* root, TreeNode** nodes, int* count) {
+    if (!root) return;
+    Queue* queue = createQueue();
+    enqueue(queue, root);
+
+    while (!isQueueEmpty(queue)) {
+        TreeNode* current = dequeue(queue);
+        nodes[(*count)++] = current;
+        if (current->left) enqueue(queue, current->left);
+        if (current->right) enqueue(queue, current->right);
+    }
+
+    free(queue);
+}
+
+// (16) BT -> complete BT
+TreeNode* to_complete_bt(TreeNode* root) {
+    if (!root) return NULL;
+
+    // Collect all nodes in level order
+    TreeNode* nodes[1000]; // Assume max nodes is 1000 for simplicity
+    int count = 0;
+    collect_nodes(root, nodes, &count);
+
+    // Rebuild the tree as a complete binary tree
+    for (int i = 0; i < count; i++) {
+        nodes[i]->left = (2 * i + 1 < count) ? nodes[2 * i + 1] : NULL;
+        nodes[i]->right = (2 * i + 2 < count) ? nodes[2 * i + 2] : NULL;
+    }
+
+    return nodes[0];
+}
+
+// helper for (17)
+
+void collect_values_inorder(TreeNode* root, char* values, int* count) {
+    if (!root) return;
+    collect_values_inorder(root->left, values, count);
+    values[(*count)++] = root->val;
+    collect_values_inorder(root->right, values, count);
+}
+
+void rebuild_complete_bst(TreeNode* root, char* values, int* index) {
+    if (!root) return;
+    rebuild_complete_bst(root->left, values, index);
+    root->val = values[(*index)++];
+    rebuild_complete_bst(root->right, values, index);
+}
+
+// (17) BT -> complete BST
+TreeNode* to_complete_bst(TreeNode* root) {
+    if (!root) return NULL;
+
+    // Collect all values using in-order traversal
+    char values[1000]; // Assume max nodes is 1000 for simplicity
+    int count = 0;
+    collect_values_inorder(root, values, &count);
+
+    // Sort the values to satisfy BST property
+    qsort(values, count, sizeof(char), (int (*)(const void*, const void*))strcmp);
+
+    // Rebuild the tree as a complete binary tree
+    TreeNode* nodes[1000];
+    int nodeCount = 0;
+    collect_nodes(root, nodes, &nodeCount);
+    for (int i = 0; i < nodeCount; i++) {
+        nodes[i]->left = (2 * i + 1 < nodeCount) ? nodes[2 * i + 1] : NULL;
+        nodes[i]->right = (2 * i + 2 < nodeCount) ? nodes[2 * i + 2] : NULL;
+    }
+
+    // Populate values into the complete binary tree
+    int index = 0;
+    rebuild_complete_bst(nodes[0], values, &index);
+
+    return nodes[0];
 }
 
 // Free the entire tree

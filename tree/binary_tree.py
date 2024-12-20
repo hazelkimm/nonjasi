@@ -1,3 +1,22 @@
+# [Functions]
+# (1) is_complete: check if the tree is complete (bool)
+# (2) is_balanced: check if the tree is balanced (bool)
+# (3) is_perfect: check if the tree is perfect (bool)
+# (4) is_full: check if the tree is full (bool)
+# (5) size: count all number of nodes (int)
+# (6) flatten_bt: flatten a binary tree to a list. An argument will be given whether to do it in pre-order, in-order, or post-order (list)
+# (7) mirror: invert the tree: left->right and right->left (void)
+# (8) diameter: return size of longest path between two nodes (int)
+# (9) find_path: find and return the path from the root to a specific node (list)
+# (10) is_symmetric: check if the tree is symmetric around the center (bool)
+# (11) lowest_common_ancestor: return the lca of node1 and node2 (int)
+# (12) count_leaves: count all leaves (int)
+# (13) is_subtree: Given a TreeNode, check if the treenode is a subtree of the current tree (bool)
+# (14) count_nodes_per_level: Return a dictionary showing the count of nodes at each level (dict)
+# (15) create_bt_from_array: Given a list of ints (or a string), make a complete binary tree (left to right)
+# (16) to_complete_bt: Given a binary tree, convert it into a complete binary tree (in-place)
+# (17) to_complete_bst: Given a binary tree, convert it into a complete BST (in-place) 
+
 class TreeNode:
     def __init__(self, x):
         self.val = x
@@ -231,6 +250,62 @@ class BinaryTree:
                 if 2 * i + 2 < len(arr):
                     nodes[i].right = nodes[2 * i + 2]
         return BinaryTree(nodes[0])
+    
+    # (16) Convert binary tree to complete binary tree
+    def to_complete_bt(self):
+        if not self.root:
+            return
+
+        # Collect all nodes in level-order
+        nodes = []
+        queue = [self.root]
+        while queue:
+            node = queue.pop(0)
+            nodes.append(node)
+            if node.left:
+                queue.append(node.left)
+            if node.right:
+                queue.append(node.right)
+
+        # Rebuild tree as a complete binary tree
+        for i in range(len(nodes)):
+            nodes[i].left = nodes[2 * i + 1] if 2 * i + 1 < len(nodes) else None
+            nodes[i].right = nodes[2 * i + 2] if 2 * i + 2 < len(nodes) else None
+
+        self.root = nodes[0]
+        
+    # (17) Convert binary tree to complete binary search tree
+    def to_complete_bst(self):
+        if not self.root:
+            return
+
+        # Step 1: Collect all values in in-order traversal
+        def collect_values(node, values):
+            if not node:
+                return
+            collect_values(node.left, values)
+            values.append(node.val)
+            collect_values(node.right, values)
+
+        values = []
+        collect_values(self.root, values)
+
+        # Step 2: Sort the values to satisfy BST property
+        values.sort()
+
+        # Step 3: Convert to complete binary tree
+        self.to_complete_bt()
+
+        # Step 4: Reassign sorted values in in-order traversal
+        def assign_values(node, index):
+            if not node:
+                return index
+            index = assign_values(node.left, index)
+            node.val = values[index]
+            index += 1
+            return assign_values(node.right, index)
+
+        assign_values(self.root, 0)
     
 ##############################################################################
 # Create binary tree from array

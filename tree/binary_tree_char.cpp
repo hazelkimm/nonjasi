@@ -21,6 +21,9 @@ using namespace std;
 // (13) is_subtree: Given a TreeNode, check if the treenode is a subtree of the current tree (bool)
 // (14) count_nodes_per_level: Return a dictionary showing the count of nodes at each level (dict)
 // (15) create_bt_from_array: Given a list of ints (or a string), make a complete binary tree (left to right)
+// (16) to_complete_bt: Given a binary tree, convert it into a complete binary tree (in-place)
+// (17) to_complete_bst: Given a binary tree, convert it into a complete BST (in-place) 
+
 
 // Definition of a binary tree node
 struct TreeNode {
@@ -225,6 +228,73 @@ TreeNode* create_bt_from_array(const string& values) {
     }
 
     return nodes[0];
+}
+
+// Helper for (16)
+void collect_nodes(TreeNode* root, vector<TreeNode*>& nodes) {
+    if (!root) return;
+
+    queue<TreeNode*> q;
+    q.push(root);
+
+    while (!q.empty()) {
+        TreeNode* current = q.front();
+        q.pop();
+        nodes.push_back(current);
+
+        if (current->left) q.push(current->left);
+        if (current->right) q.push(current->right);
+    }
+}
+
+// (16) BT -> complete BT
+TreeNode* to_complete_bt(TreeNode* root) {
+    if (!root) return nullptr;
+
+    vector<TreeNode*> nodes;
+    collect_nodes(root, nodes);
+
+    // Rebuild tree as complete binary tree
+    for (size_t i = 0; i < nodes.size(); ++i) {
+        nodes[i]->left = (2 * i + 1 < nodes.size()) ? nodes[2 * i + 1] : nullptr;
+        nodes[i]->right = (2 * i + 2 < nodes.size()) ? nodes[2 * i + 2] : nullptr;
+    }
+
+    return nodes[0];
+}
+
+// Helper for (17)
+void collect_values_inorder(TreeNode* root, vector<char>& values) {
+    if (!root) return;
+    collect_values_inorder(root->left, values);
+    values.push_back(root->val);
+    collect_values_inorder(root->right, values);
+}
+
+void assign_values_inorder(TreeNode* root, vector<char>& values, size_t& index) {
+    if (!root) return;
+    assign_values_inorder(root->left, values, index);
+    root->val = values[index++];
+    assign_values_inorder(root->right, values, index);
+}
+
+// (17) BT -> complete BST
+TreeNode* to_complete_bst(TreeNode* root) {
+    if (!root) return nullptr;
+
+    // Step 1: Collect all values in sorted order
+    vector<char> values;
+    collect_values_inorder(root, values);
+    sort(values.begin(), values.end());
+
+    // Step 2: Convert to complete binary tree
+    root = to_complete_bt(root);
+
+    // Step 3: Assign sorted values back to the tree in in-order
+    size_t index = 0;
+    assign_values_inorder(root, values, index);
+
+    return root;
 }
 
 // Main function to demonstrate functionality

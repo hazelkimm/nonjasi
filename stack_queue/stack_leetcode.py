@@ -1608,3 +1608,234 @@ class Solution:
 
     return build(0, len(nums) - 1)
   
+# 678. Valid Parenthesis String
+# Medium
+
+# Topics
+# Companies
+
+# Hint
+# Given a string s containing only three types of characters: '(', ')' and '*', return true if s is valid.
+
+# The following rules define a valid string:
+
+# Any left parenthesis '(' must have a corresponding right parenthesis ')'.
+# Any right parenthesis ')' must have a corresponding left parenthesis '('.
+# Left parenthesis '(' must go before the corresponding right parenthesis ')'.
+# '*' could be treated as a single right parenthesis ')' or a single left parenthesis '(' or an empty string "".
+ 
+
+# Example 1:
+
+# Input: s = "()"
+# Output: true
+# Example 2:
+
+# Input: s = "(*)"
+# Output: true
+# Example 3:
+
+# Input: s = "(*))"
+# Output: true
+ 
+
+# Constraints:
+
+# 1 <= s.length <= 100
+# s[i] is '(', ')' or '*'.
+
+class Solution:
+  def checkValidString(self, s: str) -> bool:
+    low = 0
+    high = 0
+
+    for c in s:
+      if c == '(':
+        low += 1
+        high += 1
+      elif c == ')':
+        if low > 0:
+          low -= 1
+        high -= 1
+      else:
+        if low > 0:
+          low -= 1
+        high += 1
+      if high < 0:
+        return False
+
+    return low == 0
+  
+# 682. Baseball Game
+# Easy
+
+# Topics
+# Companies
+# You are keeping the scores for a baseball game with strange rules. At the beginning of the game, you start with an empty record.
+
+# You are given a list of strings operations, where operations[i] is the ith operation you must apply to the record and is one of the following:
+
+# An integer x.
+# Record a new score of x.
+# '+'.
+# Record a new score that is the sum of the previous two scores.
+# 'D'.
+# Record a new score that is the double of the previous score.
+# 'C'.
+# Invalidate the previous score, removing it from the record.
+# Return the sum of all the scores on the record after applying all the operations.
+
+# The test cases are generated such that the answer and all intermediate calculations fit in a 32-bit integer and that all operations are valid.
+
+ 
+
+# Example 1:
+
+# Input: ops = ["5","2","C","D","+"]
+# Output: 30
+# Explanation:
+# "5" - Add 5 to the record, record is now [5].
+# "2" - Add 2 to the record, record is now [5, 2].
+# "C" - Invalidate and remove the previous score, record is now [5].
+# "D" - Add 2 * 5 = 10 to the record, record is now [5, 10].
+# "+" - Add 5 + 10 = 15 to the record, record is now [5, 10, 15].
+# The total sum is 5 + 10 + 15 = 30.
+# Example 2:
+
+# Input: ops = ["5","-2","4","C","D","9","+","+"]
+# Output: 27
+# Explanation:
+# "5" - Add 5 to the record, record is now [5].
+# "-2" - Add -2 to the record, record is now [5, -2].
+# "4" - Add 4 to the record, record is now [5, -2, 4].
+# "C" - Invalidate and remove the previous score, record is now [5, -2].
+# "D" - Add 2 * -2 = -4 to the record, record is now [5, -2, -4].
+# "9" - Add 9 to the record, record is now [5, -2, -4, 9].
+# "+" - Add -4 + 9 = 5 to the record, record is now [5, -2, -4, 9, 5].
+# "+" - Add 9 + 5 = 14 to the record, record is now [5, -2, -4, 9, 5, 14].
+# The total sum is 5 + -2 + -4 + 9 + 5 + 14 = 27.
+# Example 3:
+
+# Input: ops = ["1","C"]
+# Output: 0
+# Explanation:
+# "1" - Add 1 to the record, record is now [1].
+# "C" - Invalidate and remove the previous score, record is now [].
+# Since the record is empty, the total sum is 0.
+ 
+
+# Constraints:
+
+# 1 <= operations.length <= 1000
+# operations[i] is "C", "D", "+", or a string representing an integer in the range [-3 * 104, 3 * 104].
+# For operation "+", there will always be at least two previous scores on the record.
+# For operations "C" and "D", there will always be at least one previous score on the record.
+
+class Solution:
+  def calPoints(self, operations: list[str]) -> int:
+    scores = []
+
+    for operation in operations:
+      match operation:
+        case '+':
+          scores.append(scores[-1] + scores[-2])
+        case 'D':
+          scores.append(scores[-1] * 2)
+        case 'C':
+          scores.pop()
+        case default:
+          scores.append(int(operation))
+
+    return sum(scores)
+  
+# 726. Number of Atoms
+# Hard
+
+# Topics
+# Companies
+
+# Hint
+# Given a string formula representing a chemical formula, return the count of each atom.
+
+# The atomic element always starts with an uppercase character, then zero or more lowercase letters, representing the name.
+
+# One or more digits representing that element's count may follow if the count is greater than 1. If the count is 1, no digits will follow.
+
+# For example, "H2O" and "H2O2" are possible, but "H1O2" is impossible.
+# Two formulas are concatenated together to produce another formula.
+
+# For example, "H2O2He3Mg4" is also a formula.
+# A formula placed in parentheses, and a count (optionally added) is also a formula.
+
+# For example, "(H2O2)" and "(H2O2)3" are formulas.
+# Return the count of all elements as a string in the following form: the first name (in sorted order), followed by its count (if that count is more than 1), followed by the second name (in sorted order), followed by its count (if that count is more than 1), and so on.
+
+# The test cases are generated so that all the values in the output fit in a 32-bit integer.
+
+ 
+
+# Example 1:
+
+# Input: formula = "H2O"
+# Output: "H2O"
+# Explanation: The count of elements are {'H': 2, 'O': 1}.
+# Example 2:
+
+# Input: formula = "Mg(OH)2"
+# Output: "H2MgO2"
+# Explanation: The count of elements are {'H': 2, 'Mg': 1, 'O': 2}.
+# Example 3:
+
+# Input: formula = "K4(ON(SO3)2)2"
+# Output: "K4N2O14S4"
+# Explanation: The count of elements are {'K': 4, 'N': 2, 'O': 14, 'S': 4}.  
+
+class Solution:
+  def countOfAtoms(self, formula: str) -> str:
+    def parse() -> dict:
+      ans = collections.defaultdict(int)
+
+      nonlocal i
+      while i < n:
+        if formula[i] == '(':
+          i += 1
+          for elem, freq in parse().items():
+            ans[elem] += freq
+        elif formula[i] == ')':
+          i += 1
+          numStart = i
+          while i < n and formula[i].isdigit():
+            i += 1
+          factor = int(formula[numStart:i])
+          for elem, freq in ans.items():
+            ans[elem] *= factor
+          return ans
+        elif formula[i].isupper():
+          elemStart = i
+          i += 1
+          while i < n and formula[i].islower():
+            i += 1
+          elem = formula[elemStart:i]
+          numStart = i
+          while i < n and formula[i].isdigit():
+            i += 1
+          num = 1 if i == numStart else int(
+              formula[numStart:i])
+          ans[elem] += num
+
+      return ans
+
+    n = len(formula)
+
+    ans = ""
+    i = 0
+    count = parse()
+
+    for elem in sorted(count.keys()):
+      ans += elem
+      if count[elem] > 1:
+        ans += str(count[elem])
+
+    return ans
+  
+  

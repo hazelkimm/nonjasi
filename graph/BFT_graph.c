@@ -1,275 +1,294 @@
-// #include <stdio.h>
-// #include <stdlib.h>
-// #include <stdbool.h>
+// undi_graph 클래스:
+//  - Undirected Graph (무방향 그래프)을 표현하는 클래스.
+//  - add_edge: 그래프에 간선을 추가하는 함수.
+//  - BFS: 주어진 root에서 시작하여 BFS 탐색을 수행하는 함수.
+//  - shortestPath: BFS로 최단 경로를 찾는 함수.
+//  - allConnected: 모든 노드가 연결되어 있는지 확인하는 함수.
+//  - countIslands: 그래프에서 연결되지 않은 부분(섬)의 개수를 세는 함수.
+//  - hasCycle: 그래프에 사이클이 존재하는지 탐지하는 함수
 
-// #define MAX_VERTICES 100
-
-// typedef struct {
-//     int vertices[MAX_VERTICES];
-//     int adjacencyList[MAX_VERTICES][MAX_VERTICES];
-//     int vertexCount;
-//     int edgeCount[MAX_VERTICES];
-// } Graph;
-
-// typedef struct {
-//     int items[MAX_VERTICES];
-//     int front;
-//     int rear;
-// } Queue;
-
-// void initializeGraph(Graph* g, int vertexCount) {
-//     g->vertexCount = vertexCount;
-//     for (int i = 0; i < vertexCount; i++) {
-//         g->vertices[i] = i;
-//         g->edgeCount[i] = 0;
-//     }
-// }
-
-// void addEdge(Graph* g, int v, int w) {
-//     g->adjacencyList[v][g->edgeCount[v]++] = w;
-//     // g->adjacencyList[w][g->edgeCount[w]++] = v; // For undirected graph
-// }
-
-// void initializeQueue(Queue* q) {
-//     q->front = -1;
-//     q->rear = -1;
-// }
-
-// bool isQueueEmpty(Queue* q) {
-//     return q->rear == -1;
-// }
-
-// void enqueue(Queue* q, int value) {
-//     if (q->rear == MAX_VERTICES - 1) {
-//         printf("Queue is full\n");
-//         return;
-//     }
-//     if (isQueueEmpty(q)) {
-//         q->front = 0;
-//     }
-//     q->items[++q->rear] = value;
-// }
-
-// int dequeue(Queue* q) {
-//     if (isQueueEmpty(q)) {
-//         printf("Queue is empty\n");
-//         return -1;
-//     }
-//     int item = q->items[q->front];
-//     if (q->front >= q->rear) {
-//         q->front = -1;
-//         q->rear = -1;
-//     } else {
-//         q->front++;
-//     }
-//     return item;
-// }
+// dir_graph 클래스:
+//  - Directed Graph (방향 그래프)을 표현하는 클래스.
+//  - BFS: 주어진 root에서 시작하여 BFS 탐색을 수행하는 함수.
+//  - shortestPath: BFS로 최단 경로를 찾는 함수.
+//  - allConnected: 모든 노드가 연결되어 있는지 확인하는 함수.
+//  - countIslands: 그래프에서 연결되지 않은 부분(섬)의 개수를 세는 함수.
+//  - hasCycle: 그래프에 사이클이 존재하는지 탐지하는 함수.
 
 
-// void BFS_Helper(Graph* g, int startVertex, bool* visited) {
-//     Queue q;
-//     initializeQueue(&q);
 
-//     visited[startVertex] = true;
-//     enqueue(&q, startVertex);
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
 
-//     while (!isQueueEmpty(&q)) {
-//         int currentVertex = dequeue(&q);
-//         printf("%d ", currentVertex);
+#define MAX_VERTICES 100
 
-//         for (int i = 0; i < g->edgeCount[currentVertex]; i++) {
-//             int adjVertex = g->adjacencyList[currentVertex][i];
-//             if (!visited[adjVertex]) {
-//                 visited[adjVertex] = true;
-//                 enqueue(&q, adjVertex);
-//             }
-//         }
-//     }
-// }
+typedef struct {
+    int vertices[MAX_VERTICES];
+    int adjacencyList[MAX_VERTICES][MAX_VERTICES];
+    int vertexCount;
+    int edgeCount[MAX_VERTICES];
+} Graph;
 
-// void BFS_Helper2(Graph* g, int startVertex, bool* visited) {
-//     Queue q;
-//     initializeQueue(&q);
+typedef struct {
+    int items[MAX_VERTICES];
+    int front;
+    int rear;
+} Queue;
 
-//     visited[startVertex] = true;
-//     enqueue(&q, startVertex);
+void initializeGraph(Graph* g, int vertexCount) {
+    g->vertexCount = vertexCount;
+    for (int i = 0; i < vertexCount; i++) {
+        g->vertices[i] = i;
+        g->edgeCount[i] = 0;
+    }
+}
 
-//     while (!isQueueEmpty(&q)) {
-//         int currentVertex = dequeue(&q);
-//         // printf("%d ", currentVertex);
+void addEdge(Graph* g, int v, int w) {
+    g->adjacencyList[v][g->edgeCount[v]++] = w;
+    // g->adjacencyList[w][g->edgeCount[w]++] = v; // For undirected graph
+}
 
-//         for (int i = 0; i < g->edgeCount[currentVertex]; i++) {
-//             int adjVertex = g->adjacencyList[currentVertex][i];
-//             if (!visited[adjVertex]) {
-//                 visited[adjVertex] = true;
-//                 enqueue(&q, adjVertex);
-//             }
-//         }
-//     }
-// }
+void initializeQueue(Queue* q) {
+    q->front = -1;
+    q->rear = -1;
+}
 
-// void BFS(Graph* g, int startNode) {
-//     bool visited[MAX_VERTICES] = {false};
-//     BFS_Helper(g, startNode, visited);
-//     for (int i = 0; i < g->vertexCount; i++) {
-//         if (!visited[i] && g->edgeCount[i] > 0) { // 실제로 연결된 노드만 탐색
-//             BFS_Helper(g, i, visited);
-//         }
-//     }
-//     printf("\n");
-// }
+bool isQueueEmpty(Queue* q) {
+    return q->rear == -1;
+}
 
+void enqueue(Queue* q, int value) {
+    if (q->rear == MAX_VERTICES - 1) {
+        printf("Queue is full\n");
+        return;
+    }
+    if (isQueueEmpty(q)) {
+        q->front = 0;
+    }
+    q->items[++q->rear] = value;
+}
 
-// bool allConnected(Graph* g) {
-//     bool visited[MAX_VERTICES] = {false};
-//     int start_node = -1;
-
-//     for (int i = 0; i < g->vertexCount; i++) {
-//         if (g->edgeCount[i] > 0) {
-//             start_node = i;
-//             break;
-//         }
-//     }
-
-//     if (start_node == -1) return false; // 그래프에 간선이 없는 경우
-
-//     BFS_Helper2(g, start_node, visited);
-
-//     for (int i = 0; i < g->vertexCount; i++) {
-//         if (g->edgeCount[i] > 0 && !visited[i]) {
-//             return false; // 연결되지 않은 노드가 존재하면 False
-//         }
-//     }
-
-//     return true;
-// }
-
-// int countIslands(Graph* g) {
-//     bool visited[MAX_VERTICES] = {false};
-//     int island_count = 0;
-
-//     for (int i = 0; i < g->vertexCount; i++) {
-//         if (!visited[i] && g->edgeCount[i] > 0) {
-//             BFS_Helper2(g, i, visited);
-//             island_count++;
-//         }
-//     }
-
-//     return island_count;
-// }
-
-// int shortestPath(Graph* g, int start, int goal) {
-//     bool visited[MAX_VERTICES] = {false};
-//     int distance[MAX_VERTICES];
-//     int parent[MAX_VERTICES];
-//     Queue q;
-
-//     for (int i = 0; i < MAX_VERTICES; i++) {
-//         distance[i] = -1;
-//         parent[i] = -1;
-//     }
-
-//     initializeQueue(&q);
-//     visited[start] = true;
-//     distance[start] = 0;
-//     enqueue(&q, start);
-
-//     while (!isQueueEmpty(&q)) {
-//         int v = dequeue(&q);
-//         for (int i = 0; i < g->edgeCount[v]; i++) {
-//             int w = g->adjacencyList[v][i];
-//             if (!visited[w]) {
-//                 visited[w] = true;
-//                 distance[w] = distance[v] + 1;
-//                 parent[w] = v;
-//                 enqueue(&q, w);
-
-//                 if (w == goal) {
-//                     // 경로를 역순으로 추적하여 저장
-//                     int path[MAX_VERTICES];
-//                     int pathIndex = 0;
-//                     for (int current = w; current != -1; current = parent[current]) {
-//                         path[pathIndex++] = current;
-//                     }
-
-//                     // 저장된 경로를 역순으로 출력하여 start부터 goal까지 출력
-//                     printf("Shortest path from %d to %d: ", start, goal);
-//                     for (int j = pathIndex - 1; j >= 0; j--) {
-//                         printf("%d ", path[j]);
-//                     }
-//                     printf("\n");
-
-//                     return distance[goal];
-//                 }
-//             }
-//         }
-//     }
-//     return -1;
-// }
+int dequeue(Queue* q) {
+    if (isQueueEmpty(q)) {
+        printf("Queue is empty\n");
+        return -1;
+    }
+    int item = q->items[q->front];
+    if (q->front >= q->rear) {
+        q->front = -1;
+        q->rear = -1;
+    } else {
+        q->front++;
+    }
+    return item;
+}
 
 
-// bool hasCycleUtil(Graph* g, int v, bool visited[], bool recStack[]) {
-//     visited[v] = true;
-//     recStack[v] = true;
+void BFS_Helper(Graph* g, int startVertex, bool* visited) {
+    Queue q;
+    initializeQueue(&q);
 
-//     for (int i = 0; i < g->edgeCount[v]; i++) {
-//         int w = g->adjacencyList[v][i];
-//         if (!visited[w] && hasCycleUtil(g, w, visited, recStack)) {
-//             return true;
-//         } else if (recStack[w]) {
-//             return true;
-//         }
-//     }
+    visited[startVertex] = true;
+    enqueue(&q, startVertex);
 
-//     recStack[v] = false;
-//     return false;
-// }
+    while (!isQueueEmpty(&q)) {
+        int currentVertex = dequeue(&q);
+        printf("%d ", currentVertex);
 
-// bool hasCycle(Graph* g) {
-//     bool visited[MAX_VERTICES] = {false};
-//     bool recStack[MAX_VERTICES] = {false};
+        for (int i = 0; i < g->edgeCount[currentVertex]; i++) {
+            int adjVertex = g->adjacencyList[currentVertex][i];
+            if (!visited[adjVertex]) {
+                visited[adjVertex] = true;
+                enqueue(&q, adjVertex);
+            }
+        }
+    }
+}
 
-//     for (int i = 0; i < g->vertexCount; i++) {
-//         if (!visited[i]) {
-//             if (hasCycleUtil(g, i, visited, recStack)) {
-//                 return true;
-//             }
-//         }
-//     }
-//     return false;
-// }
+void BFS_Helper2(Graph* g, int startVertex, bool* visited) {
+    Queue q;
+    initializeQueue(&q);
 
-// int main() {
-//     Graph graph;
-//     initializeGraph(&graph, 9); // 9 vertices labeled 0 to 8
+    visited[startVertex] = true;
+    enqueue(&q, startVertex);
 
-//     addEdge(&graph, 1, 2);
-//     addEdge(&graph, 1, 3);
-//     addEdge(&graph, 2, 8);
-//     addEdge(&graph, 3, 4);
-//     addEdge(&graph, 3, 5);
-//     addEdge(&graph, 4, 5);
-//     addEdge(&graph, 6, 7);
-//     addEdge(&graph, 6, 8);
-//     addEdge(&graph, 7, 8);
+    while (!isQueueEmpty(&q)) {
+        int currentVertex = dequeue(&q);
+        // printf("%d ", currentVertex);
 
-//     printf("BFS starting from vertex 1:\n");
-//     BFS(&graph, 1);
+        for (int i = 0; i < g->edgeCount[currentVertex]; i++) {
+            int adjVertex = g->adjacencyList[currentVertex][i];
+            if (!visited[adjVertex]) {
+                visited[adjVertex] = true;
+                enqueue(&q, adjVertex);
+            }
+        }
+    }
+}
 
-//     printf("Are all nodes connected? %s\n", allConnected(&graph) ? "Yes" : "No");
-//     printf("Number of islands: %d\n", countIslands(&graph));
+void BFS(Graph* g, int startNode) {
+    bool visited[MAX_VERTICES] = {false};
+    BFS_Helper(g, startNode, visited);
+    for (int i = 0; i < g->vertexCount; i++) {
+        if (!visited[i] && g->edgeCount[i] > 0) { // 실제로 연결된 노드만 탐색
+            BFS_Helper(g, i, visited);
+        }
+    }
+    printf("\n");
+}
 
-//     int distance = shortestPath(&graph, 1, 5);
-//     if (distance != -1) {
-//         printf("Shortest distance from 1 to 5: %d\n", distance);
-//     } else {
-//         printf("No path from 1 to 5\n");
-//     }
 
-//     printf("Does the graph have a cycle? %s\n", hasCycle(&graph) ? "Yes" : "No");
+bool allConnected(Graph* g) {
+    bool visited[MAX_VERTICES] = {false};
+    int start_node = -1;
 
-//     return 0;
-// }
+    for (int i = 0; i < g->vertexCount; i++) {
+        if (g->edgeCount[i] > 0) {
+            start_node = i;
+            break;
+        }
+    }
+
+    if (start_node == -1) return false; // 그래프에 간선이 없는 경우
+
+    BFS_Helper2(g, start_node, visited);
+
+    for (int i = 0; i < g->vertexCount; i++) {
+        if (g->edgeCount[i] > 0 && !visited[i]) {
+            return false; // 연결되지 않은 노드가 존재하면 False
+        }
+    }
+
+    return true;
+}
+
+int countIslands(Graph* g) {
+    bool visited[MAX_VERTICES] = {false};
+    int island_count = 0;
+
+    for (int i = 0; i < g->vertexCount; i++) {
+        if (!visited[i] && g->edgeCount[i] > 0) {
+            BFS_Helper2(g, i, visited);
+            island_count++;
+        }
+    }
+
+    return island_count;
+}
+
+int shortestPath(Graph* g, int start, int goal) {
+    bool visited[MAX_VERTICES] = {false};
+    int distance[MAX_VERTICES];
+    int parent[MAX_VERTICES];
+    Queue q;
+
+    for (int i = 0; i < MAX_VERTICES; i++) {
+        distance[i] = -1;
+        parent[i] = -1;
+    }
+
+    initializeQueue(&q);
+    visited[start] = true;
+    distance[start] = 0;
+    enqueue(&q, start);
+
+    while (!isQueueEmpty(&q)) {
+        int v = dequeue(&q);
+        for (int i = 0; i < g->edgeCount[v]; i++) {
+            int w = g->adjacencyList[v][i];
+            if (!visited[w]) {
+                visited[w] = true;
+                distance[w] = distance[v] + 1;
+                parent[w] = v;
+                enqueue(&q, w);
+
+                if (w == goal) {
+                    // 경로를 역순으로 추적하여 저장
+                    int path[MAX_VERTICES];
+                    int pathIndex = 0;
+                    for (int current = w; current != -1; current = parent[current]) {
+                        path[pathIndex++] = current;
+                    }
+
+                    // 저장된 경로를 역순으로 출력하여 start부터 goal까지 출력
+                    printf("Shortest path from %d to %d: ", start, goal);
+                    for (int j = pathIndex - 1; j >= 0; j--) {
+                        printf("%d ", path[j]);
+                    }
+                    printf("\n");
+
+                    return distance[goal];
+                }
+            }
+        }
+    }
+    return -1;
+}
+
+
+bool hasCycleUtil(Graph* g, int v, bool visited[], bool recStack[]) {
+    visited[v] = true;
+    recStack[v] = true;
+
+    for (int i = 0; i < g->edgeCount[v]; i++) {
+        int w = g->adjacencyList[v][i];
+        if (!visited[w] && hasCycleUtil(g, w, visited, recStack)) {
+            return true;
+        } else if (recStack[w]) {
+            return true;
+        }
+    }
+
+    recStack[v] = false;
+    return false;
+}
+
+bool hasCycle(Graph* g) {
+    bool visited[MAX_VERTICES] = {false};
+    bool recStack[MAX_VERTICES] = {false};
+
+    for (int i = 0; i < g->vertexCount; i++) {
+        if (!visited[i]) {
+            if (hasCycleUtil(g, i, visited, recStack)) {
+                return true;
+            }
+        }
+    }
+    return false;
+}
+
+int main() {
+    Graph graph;
+    initializeGraph(&graph, 9); // 9 vertices labeled 0 to 8
+
+    addEdge(&graph, 1, 2);
+    addEdge(&graph, 1, 3);
+    addEdge(&graph, 2, 8);
+    addEdge(&graph, 3, 4);
+    addEdge(&graph, 3, 5);
+    addEdge(&graph, 4, 5);
+    addEdge(&graph, 6, 7);
+    addEdge(&graph, 6, 8);
+    addEdge(&graph, 7, 8);
+
+    printf("BFS starting from vertex 1:\n");
+    BFS(&graph, 1);
+
+    printf("Are all nodes connected? %s\n", allConnected(&graph) ? "Yes" : "No");
+    printf("Number of islands: %d\n", countIslands(&graph));
+
+    int distance = shortestPath(&graph, 1, 5);
+    if (distance != -1) {
+        printf("Shortest distance from 1 to 5: %d\n", distance);
+    } else {
+        printf("No path from 1 to 5\n");
+    }
+
+    printf("Does the graph have a cycle? %s\n", hasCycle(&graph) ? "Yes" : "No");
+
+    return 0;
+}
 
 
 

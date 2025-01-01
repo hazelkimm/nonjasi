@@ -1,3 +1,21 @@
+// undi_graph 클래스:
+//  - Undirected Graph (무방향 그래프)을 표현하는 클래스.
+//  - add_edge: 그래프에 간선을 추가하는 함수.
+//  - BFS: 주어진 root에서 시작하여 BFS 탐색을 수행하는 함수.
+//  - shortestPath: BFS로 최단 경로를 찾는 함수.
+//  - areAllConnected: 모든 노드가 연결되어 있는지 확인하는 함수.
+//  - countIslands: 그래프에서 연결되지 않은 부분(섬)의 개수를 세는 함수.
+//  - hasCycle: 그래프에 사이클이 존재하는지 탐지하는 함수
+
+// dir_graph 클래스:
+//  - Directed Graph (방향 그래프)을 표현하는 클래스.
+//  - BFS: 주어진 root에서 시작하여 BFS 탐색을 수행하는 함수.
+//  - shortestPath: BFS로 최단 경로를 찾는 함수.
+//  - areAllConnected: 모든 노드가 연결되어 있는지 확인하는 함수.
+//  - countIslands: 그래프에서 연결되지 않은 부분(섬)의 개수를 세는 함수.
+//  - hasCycle: 그래프에 사이클이 존재하는지 탐지하는 함수.
+
+
 #include <iostream>
 #include <vector>
 #include <cstdlib>
@@ -7,269 +25,269 @@
 #include <algorithm>
 
 using namespace std;
-// class UndiGraph {
-// public:
-//     // Constructor to initialize the graph with vertices and edges
-//     UndiGraph(const vector<int>& V, const vector<pair<int, int>>& E) {
-//         this->V = V;
-//         for (const auto& v : V) {
-//             neighbors[v] = vector<int>();
-//         }
-//         for (const auto& edge : E) {
-//             neighbors[edge.first].push_back(edge.second);
-//             neighbors[edge.second].push_back(edge.first);
-//         }
-//     }
+class UndiGraph {
+public:
+    // Constructor to initialize the graph with vertices and edges
+    UndiGraph(const vector<int>& V, const vector<pair<int, int>>& E) {
+        this->V = V;
+        for (const auto& v : V) {
+            neighbors[v] = vector<int>();
+        }
+        for (const auto& edge : E) {
+            neighbors[edge.first].push_back(edge.second);
+            neighbors[edge.second].push_back(edge.first);
+        }
+    }
 
 
-//     /*
-//     만약 main함수가 이런식으로 주어진다면 undigraph만 undigraph + addedge로 쪼개면 됨!
-//     graph.addEdge(0, 1);
-//     graph.addEdge(0, 2);
-//     graph.addEdge(1, 3);
-//     graph.addEdge(2, 3);
-//     graph.addEdge(3, 4);
-//     */
+    /*
+    만약 main함수가 이런식으로 주어진다면 undigraph만 undigraph + addedge로 쪼개면 됨!
+    graph.addEdge(0, 1);
+    graph.addEdge(0, 2);
+    graph.addEdge(1, 3);
+    graph.addEdge(2, 3);
+    graph.addEdge(3, 4);
+    */
 
-//     /*
-//     UndiGraph(const vector<int>& V) {
-//         this->V = V;
-//         for (const auto& v : V) {
-//             neighbors[v] = vector<int>();
-//         }
-//     }
+    /*
+    UndiGraph(const vector<int>& V) {
+        this->V = V;
+        for (const auto& v : V) {
+            neighbors[v] = vector<int>();
+        }
+    }
 
-//     // Function to insert an edge
-//     void addEdge(int v, int w) {
-//         neighbors[v].push_back(w);
-//         neighbors[w].push_back(v); // For undirected graph
-//     }
-//     */
+    // Function to insert an edge
+    void addEdge(int v, int w) {
+        neighbors[v].push_back(w);
+        neighbors[w].push_back(v); // For undirected graph
+    }
+    */
 
 
 
-//     // BFS function to traverse the graph starting from a root node
-//     void BFS(const int& root) {
-//         if (root == NULL) return;
+    // BFS function to traverse the graph starting from a root node
+    void BFS(const int& root) {
+        if (root == NULL) return;
 
-//         queue<int> q;
-//         unordered_map<int, bool> visited;
+        queue<int> q;
+        unordered_map<int, bool> visited;
 
-//         for (const auto& v : V) {
-//             visited[v] = false;
-//         }
+        for (const auto& v : V) {
+            visited[v] = false;
+        }
 
-//         q.push(root);
-//         visited[root] = true;
+        q.push(root);
+        visited[root] = true;
 
-//         while (!q.empty()) {
-//             int curNode = q.front();
-//             q.pop();
-//             cout << curNode << " ";
+        while (!q.empty()) {
+            int curNode = q.front();
+            q.pop();
+            cout << curNode << " ";
 
-//             for (const auto& neighbor : neighbors[curNode]) {
-//                 if (!visited[neighbor]) {
-//                     q.push(neighbor);
-//                     visited[neighbor] = true;
-//                 }
-//             }
-//         }
+            for (const auto& neighbor : neighbors[curNode]) {
+                if (!visited[neighbor]) {
+                    q.push(neighbor);
+                    visited[neighbor] = true;
+                }
+            }
+        }
 
-//         for (int k: V) {
-//             if (!visited[k]) {
-//                 q.push(k);
-//                 visited[k] = true;
-//                 while (!q.empty()) {
-//                     int curNode = q.front();
-//                     q.pop();
-//                     cout << curNode << ' ';
-//                     for (int v : neighbors[curNode]) {
-//                         if (!visited[v]) {
-//                             q.push(v);
-//                             visited[v] = true;
-//                         }
-//                     }
+        for (int k: V) {
+            if (!visited[k]) {
+                q.push(k);
+                visited[k] = true;
+                while (!q.empty()) {
+                    int curNode = q.front();
+                    q.pop();
+                    cout << curNode << ' ';
+                    for (int v : neighbors[curNode]) {
+                        if (!visited[v]) {
+                            q.push(v);
+                            visited[v] = true;
+                        }
+                    }
 
-//                 }
-//             }
-//         } 
-//     }
+                }
+            }
+        } 
+    }
 
 
   
 
 
-//     // Shortest path in undirected, unweighted graph
-//     vector<int> shortestPath(int start, int goal) {
-//         if (start == goal) {
-//             return {start};
-//         }
+    // Shortest path in undirected, unweighted graph
+    vector<int> shortestPath(int start, int goal) {
+        if (start == goal) {
+            return {start};
+        }
 
-//         unordered_map<int, bool> visited;
-//         unordered_map<int, int> parent;
-//         queue<int> q;
+        unordered_map<int, bool> visited;
+        unordered_map<int, int> parent;
+        queue<int> q;
 
-//         q.push(start);
-//         visited[start] = true;
-//         parent[start] = -1;
+        q.push(start);
+        visited[start] = true;
+        parent[start] = -1;
 
-//         while (!q.empty()) {
-//             int node = q.front();
-//             q.pop();
+        while (!q.empty()) {
+            int node = q.front();
+            q.pop();
 
-//             for (const auto& neighbor : neighbors[node]) {
-//                 if (!visited[neighbor]) {
-//                     visited[neighbor] = true;
-//                     parent[neighbor] = node;
-//                     q.push(neighbor);
+            for (const auto& neighbor : neighbors[node]) {
+                if (!visited[neighbor]) {
+                    visited[neighbor] = true;
+                    parent[neighbor] = node;
+                    q.push(neighbor);
 
-//                     if (neighbor == goal) {
-//                         vector<int> path;
-//                         for (int at = goal; at != -1; at = parent[at]) {
-//                             path.push_back(at);
-//                         }
-//                         reverse(path.begin(), path.end());
-//                         return path;
-//                     }
-//                 }
-//             }
-//         }
-//         return {}; // No path found
-//     }
+                    if (neighbor == goal) {
+                        vector<int> path;
+                        for (int at = goal; at != -1; at = parent[at]) {
+                            path.push_back(at);
+                        }
+                        reverse(path.begin(), path.end());
+                        return path;
+                    }
+                }
+            }
+        }
+        return {}; // No path found
+    }
 
-//     // Check if all nodes are connected
-//     bool areAllConnected() {
-//         if (V.empty()) return false;
+    // Check if all nodes are connected
+    bool areAllConnected() {
+        if (V.empty()) return false;
 
-//         unordered_map<int, bool> visited;
-//         for (const auto& v : V) {
-//             visited[v] = false;
-//         }
+        unordered_map<int, bool> visited;
+        for (const auto& v : V) {
+            visited[v] = false;
+        }
 
-//         int count = 0;
-//         queue<int> q;
-//         q.push(V[0]);
+        int count = 0;
+        queue<int> q;
+        q.push(V[0]);
 
-//         while (!q.empty()) {
-//             int node = q.front();
-//             q.pop();
+        while (!q.empty()) {
+            int node = q.front();
+            q.pop();
 
-//             if (!visited[node]) {
-//                 visited[node] = true;
-//                 count++;
-//                 for (const auto& neighbor : neighbors[node]) {
-//                     if (!visited[neighbor]) {
-//                         q.push(neighbor);
-//                     }
-//                 }
-//             }
-//         }
+            if (!visited[node]) {
+                visited[node] = true;
+                count++;
+                for (const auto& neighbor : neighbors[node]) {
+                    if (!visited[neighbor]) {
+                        q.push(neighbor);
+                    }
+                }
+            }
+        }
 
-//         return count == V.size();
-//     }
+        return count == V.size();
+    }
 
-//     // Count the number of islands (connected components)
-//     int countIslands() {
-//         if (V.empty()) return 0;
+    // Count the number of islands (connected components)
+    int countIslands() {
+        if (V.empty()) return 0;
 
-//         unordered_map<int, bool> visited;
-//         for (const auto& v : V) {
-//             visited[v] = false;
-//         }
+        unordered_map<int, bool> visited;
+        for (const auto& v : V) {
+            visited[v] = false;
+        }
 
-//         int island_count = 0;
+        int island_count = 0;
 
-//         for (const auto& v : V) {
-//             if (!visited[v]) {
-//                 queue<int> q;
-//                 q.push(v);
-//                 island_count++;
+        for (const auto& v : V) {
+            if (!visited[v]) {
+                queue<int> q;
+                q.push(v);
+                island_count++;
 
-//                 while (!q.empty()) {
-//                     int node = q.front();
-//                     q.pop();
+                while (!q.empty()) {
+                    int node = q.front();
+                    q.pop();
 
-//                     if (!visited[node]) {
-//                         visited[node] = true;
-//                         for (const auto& neighbor : neighbors[node]) {
-//                             if (!visited[neighbor]) {
-//                                 q.push(neighbor);
-//                             }
-//                         }
-//                     }
-//                 }
-//             }
-//         }
+                    if (!visited[node]) {
+                        visited[node] = true;
+                        for (const auto& neighbor : neighbors[node]) {
+                            if (!visited[neighbor]) {
+                                q.push(neighbor);
+                            }
+                        }
+                    }
+                }
+            }
+        }
 
-//         return island_count;
-//     }
+        return island_count;
+    }
 
-//     // Cycle detection in undirected graph
-//     bool hasCycleUtil(int v, unordered_map<int, bool>& visited, unordered_map<int, bool>& recursionStack) {
-//         visited[v] = true;
-//         recursionStack[v] = true;
+    // Cycle detection in undirected graph
+    bool hasCycleUtil(int v, unordered_map<int, bool>& visited, unordered_map<int, bool>& recursionStack) {
+        visited[v] = true;
+        recursionStack[v] = true;
 
-//         for (int neighbor : neighbors[v]) {
-//             if (!visited[neighbor] && hasCycleUtil(neighbor, visited, recursionStack))
-//                 return true;
-//             else if (recursionStack[neighbor])
-//                 return true;
-//         }
+        for (int neighbor : neighbors[v]) {
+            if (!visited[neighbor] && hasCycleUtil(neighbor, visited, recursionStack))
+                return true;
+            else if (recursionStack[neighbor])
+                return true;
+        }
 
-//         recursionStack[v] = false;
-//         return false;
-//     }
+        recursionStack[v] = false;
+        return false;
+    }
 
-//     bool hasCycle() {
-//         unordered_map<int, bool> visited;
-//         unordered_map<int, bool> recursionStack;
+    bool hasCycle() {
+        unordered_map<int, bool> visited;
+        unordered_map<int, bool> recursionStack;
 
-//         for (const auto& v : V) {
-//             if (!visited[v]) {
-//                 if (hasCycleUtil(v, visited, recursionStack))
-//                     return true;
-//             }
-//         }
-//         return false;
-//     }
-
-
-// private:
-//     vector<int> V;
-//     unordered_map<int, vector<int>> neighbors; // Adjacency list representation
+        for (const auto& v : V) {
+            if (!visited[v]) {
+                if (hasCycleUtil(v, visited, recursionStack))
+                    return true;
+            }
+        }
+        return false;
+    }
 
 
-// };
+private:
+    vector<int> V;
+    unordered_map<int, vector<int>> neighbors; // Adjacency list representation
 
-// int main() {
-//     vector<int> vertices = {1,2,3,4,5,6,7,8};
-//     vector<pair<int, int>> edges = {{1,2}, {1,3}, {2, 8}, {3, 4}, {3, 5}, {4, 5}, {6, 7}, {6, 8}, {7, 8}};
 
-//     // Create the graph
-//     UndiGraph graph(vertices, edges);
+};
 
-//     cout << "BFS starting from vertex 1:" << endl;
-//     graph.BFS(1);
-//     // 1 2 3 8 4 5 6 7
-//     cout << endl;
+int main() {
+    vector<int> vertices = {1,2,3,4,5,6,7,8};
+    vector<pair<int, int>> edges = {{1,2}, {1,3}, {2, 8}, {3, 4}, {3, 5}, {4, 5}, {6, 7}, {6, 8}, {7, 8}};
 
-//     cout << "Shortest Path from 1 to 5: ";
-//     vector<int> path = graph.shortestPath(1, 5);
-//     if (!path.empty()) {
-//         for (int node : path) {
-//             cout << node << " ";
-//         }
-//         cout << endl;
-//     } else {
-//         cout << "No path found" << endl;
-//     }
+    // Create the graph
+    UndiGraph graph(vertices, edges);
 
-//     cout << "Are all nodes connected? " << (graph.areAllConnected() ? "Yes" : "No") << endl;
-//     cout << "Number of islands: " << graph.countIslands() << endl;
-//     cout << "Does the graph have a cycle? " << (graph.hasCycle() ? "Yes" : "No") << endl;
+    cout << "BFS starting from vertex 1:" << endl;
+    graph.BFS(1);
+    // 1 2 3 8 4 5 6 7
+    cout << endl;
 
-//     return 0;
-// }
+    cout << "Shortest Path from 1 to 5: ";
+    vector<int> path = graph.shortestPath(1, 5);
+    if (!path.empty()) {
+        for (int node : path) {
+            cout << node << " ";
+        }
+        cout << endl;
+    } else {
+        cout << "No path found" << endl;
+    }
+
+    cout << "Are all nodes connected? " << (graph.areAllConnected() ? "Yes" : "No") << endl;
+    cout << "Number of islands: " << graph.countIslands() << endl;
+    cout << "Does the graph have a cycle? " << (graph.hasCycle() ? "Yes" : "No") << endl;
+
+    return 0;
+}
 
 
 

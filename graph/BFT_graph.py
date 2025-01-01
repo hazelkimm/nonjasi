@@ -1,3 +1,21 @@
+# undi_graph 클래스:
+#  - Undirected Graph (무방향 그래프)을 표현하는 클래스.
+#  - add_edge: 그래프에 간선을 추가하는 함수.
+#  - BFS: 주어진 root에서 시작하여 BFS 탐색을 수행하는 함수.
+#  - bfs_shortest_path: BFS로 최단 경로를 찾는 함수.
+#  - are_all_connected: 모든 노드가 연결되어 있는지 확인하는 함수.
+#  - count_islands: 그래프에서 연결되지 않은 부분(섬)의 개수를 세는 함수.
+#  - cycle_detection: 그래프에 사이클이 존재하는지 탐지하는 함수.
+
+# dir_graph 클래스:
+#  - Directed Graph (방향 그래프)을 표현하는 클래스.
+#  - BFS: 주어진 root에서 시작하여 BFS 탐색을 수행하는 함수.
+#  - bfs_shortest_path: BFS로 최단 경로를 찾는 함수.
+#  - are_all_connected: 모든 노드가 연결되어 있는지 확인하는 함수.
+#  - count_islands: 그래프에서 연결되지 않은 부분(섬)의 개수를 세는 함수.
+#  - cycle_detection: 그래프에 사이클이 존재하는지 탐지하는 함수.
+
+
 ############ Vertex와 Edge가 주어진 경우 #################
 ##### Undirected Graph #########
 from collections import deque
